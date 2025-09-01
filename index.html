@@ -95,11 +95,6 @@
                 <button id="teacherManageTab" class="px-6 py-3 rounded-lg text-gray-600 hover:bg-gray-100 font-medium ml-2">👥 จัดการครู</button>
                 <button id="detailTab" class="px-6 py-3 rounded-lg text-gray-600 hover:bg-gray-100 font-medium ml-2 hidden">👤 รายละเอียดครู</button>
             </div>
-            
-            <button id="logoutBtnNav" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg transition duration-200 flex items-center space-x-2 card-shadow">
-                <span>🚪</span>
-                <span>ออกจากระบบ</span>
-            </button>
         </div>
 
         <!-- Home Page -->
@@ -930,14 +925,9 @@
         // Setup logout button event listener
         function setupLogoutButton() {
             const logoutBtn = document.getElementById('logoutBtn');
-            const logoutBtnNav = document.getElementById('logoutBtnNav');
             
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', logout);
-            }
-            
-            if (logoutBtnNav) {
-                logoutBtnNav.addEventListener('click', logout);
             }
         }
 
@@ -988,13 +978,13 @@
                 addTab.style.display = 'inline-block';
                 switchToTab('home');
             } else if (userLevel === 'teacher') {
-                // Teacher can only see their own data and add their own leave
+                // Teacher can see their own data and add their own leave
+                homeTab.style.display = 'inline-block';
                 addTab.style.display = 'inline-block';
-                switchToTab('add');
+                switchToTab('home');
                 
                 // Modify home tab to show only their data
                 homeTab.textContent = '📊 ข้อมูลการลาของฉัน';
-                homeTab.style.display = 'inline-block';
             } else if (userLevel === 'viewer') {
                 // Viewer can see all data and add leave for others
                 homeTab.style.display = 'inline-block';
@@ -1369,22 +1359,22 @@
 
         // Display pending approvals table
         function displayPendingApprovals(leaves) {
-            const pendingLeaves = leaves.filter(leave => leave.approvalStatus === 'pending');
+            let pendingLeaves = leaves.filter(leave => leave.approvalStatus === 'pending');
             const pendingSection = document.getElementById('pendingApprovalsSection');
             const pendingTable = document.getElementById('pendingApprovalsTable');
             const noPendingMessage = document.getElementById('noPendingMessage');
             const pendingCount = document.getElementById('pendingCount');
             
+            // Filter for teacher level - show only their own pending leaves
+            if (currentUser && currentUser.userLevel === 'teacher') {
+                pendingLeaves = pendingLeaves.filter(leave => leave.teacherName === currentUser.name);
+            }
+            
             // Update count
             pendingCount.textContent = `${pendingLeaves.length} รายการ`;
             
-            // Show/hide section based on user level and data
-            if (currentUser && (currentUser.userLevel === 'admin' || currentUser.userLevel === 'manager' || currentUser.userLevel === 'viewer')) {
-                pendingSection.style.display = 'block';
-            } else {
-                pendingSection.style.display = 'none';
-                return;
-            }
+            // Show section for all user levels
+            pendingSection.style.display = 'block';
             
             if (pendingLeaves.length === 0) {
                 pendingTable.style.display = 'none';
@@ -1493,21 +1483,21 @@
             fiveDaysAgo.setDate(fiveDaysAgo.getDate() - 5);
             
             // Filter leaves from last 5 days
-            const recentLeaves = leaves.filter(leave => {
+            let recentLeaves = leaves.filter(leave => {
                 const leaveDate = new Date(leave.startDate);
                 return leaveDate >= fiveDaysAgo;
             });
             
+            // Filter for teacher level - show only their own recent leaves
+            if (currentUser && currentUser.userLevel === 'teacher') {
+                recentLeaves = recentLeaves.filter(leave => leave.teacherName === currentUser.name);
+            }
+            
             // Update count
             recentCount.textContent = `${recentLeaves.length} รายการ`;
             
-            // Show/hide section based on user level
-            if (currentUser && currentUser.userLevel === 'teacher') {
-                recentSection.style.display = 'none';
-                return;
-            } else {
-                recentSection.style.display = 'block';
-            }
+            // Show section for all user levels
+            recentSection.style.display = 'block';
             
             if (recentLeaves.length === 0) {
                 recentTable.style.display = 'none';
@@ -2217,5 +2207,5 @@
         document.getElementById('filterLeaveType').addEventListener('change', filterTeacherData);
         document.getElementById('clearFilters').addEventListener('click', clearFilters);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9781ed3e87747dc6',t:'MTc1NjY5OTkxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9782227837a47dc6',t:'MTc1NjcwMjA5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
