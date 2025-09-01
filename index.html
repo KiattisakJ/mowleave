@@ -122,6 +122,7 @@
                                         <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">จำนวนวัน</th>
                                         <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">สาเหตุ</th>
                                         <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">การอนุมัติ</th>
+                                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">จัดการ</th>
                                     </tr>
                                 </thead>
                                 <tbody id="pendingApprovalsTable" class="divide-y divide-gray-200">
@@ -1454,6 +1455,13 @@
                             </span>
                         `}
                     </td>
+                    <td class="px-4 py-3 text-center">
+                        ${canEditPendingLeave(leave) ? `
+                            <button onclick="editLeave('${leave.id}')" class="inline-flex items-center px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-medium hover:bg-orange-200 transition duration-200">
+                                ✏️ แก้ไข
+                            </button>
+                        ` : '<span class="text-gray-400 text-xs">ไม่สามารถแก้ไข</span>'}
+                    </td>
                 `;
                 
                 pendingTable.appendChild(row);
@@ -1792,6 +1800,19 @@
                 return leave.teacherName === currentUser.name; // Teacher can only edit their own
             } else if (currentUser.userLevel === 'viewer') {
                 return false; // Viewer cannot edit
+            }
+            
+            return false;
+        }
+
+        // Check if user can edit pending leave (for pending approvals table)
+        function canEditPendingLeave(leave) {
+            if (!currentUser) return false;
+            
+            if (currentUser.userLevel === 'admin') {
+                return true; // Admin can edit all pending leaves
+            } else if (currentUser.userLevel === 'teacher') {
+                return leave.teacherName === currentUser.name; // Teacher can only edit their own pending leaves
             }
             
             return false;
@@ -2207,5 +2228,5 @@
         document.getElementById('filterLeaveType').addEventListener('change', filterTeacherData);
         document.getElementById('clearFilters').addEventListener('click', clearFilters);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9782227837a47dc6',t:'MTc1NjcwMjA5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97822b7741667dc6',t:'MTc1NjcwMjQ2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
